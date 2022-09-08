@@ -5,7 +5,7 @@
     $theme['name'] = 'KolymaNET SpamDB Client';
     // Description (you can use Tinyboard markup here)
     $theme['description'] = 'Uses <a href="//spam.kolyma.org/spam.php">KolymaNET Anti-Spam Database</a> to automatically filter and block posts. An API key is required.';
-    $theme['version'] = 'v0.1.3';
+    $theme['version'] = 'v0.1.4';
     
     // Theme configuration    
     $theme['config'] = Array();
