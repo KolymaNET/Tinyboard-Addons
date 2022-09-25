@@ -10,7 +10,7 @@
     // Theme configuration    
     $theme['config'] = Array();
 
-	$theme['config'][] = Array(
+    $theme['config'][] = Array(
         'title' => 'Reply Kaptcha',
         'name' => 'reply_enabled',
         'type' => 'checkbox',
@@ -22,7 +22,7 @@
         'title' => 'VIP API Key',
         'name' => 'apikey',
         'type' => 'text',
-		'comment' => '(ignored if empty)'
+        'comment' => '(ignored if empty)'
     );
     
     $theme['config'][] = Array(
