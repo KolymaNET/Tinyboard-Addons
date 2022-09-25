@@ -26,6 +26,7 @@
            
             // Moderator
             if (isset($_POST['mod']) && $_POST['mod']) return;
+            if (!isset($_POST['body'])) return;
             if (isset($_POST['thread']) && $_POST['thread']) return;
 
             // Setup
