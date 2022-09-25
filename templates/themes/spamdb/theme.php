@@ -7,9 +7,9 @@
     
     function spamdb_build($action, $settings, $board) {
         // Possible values for $action:
-        //    - all (rebuild everything, initialization)
-        //    - news (news has been updated)
-        //    - boards (board list changed)
+        //      - all (rebuild everything, initialization)
+        //    - post (a post has been made)
+        //    - post-thread (a thread has been made)
         
         SpamDB::build($action, $settings);
     }
@@ -20,20 +20,27 @@
         public function build($action, $settings) {
             global $config;
            
-            // Moderator
-            if (isset($_POST['mod']) && $_POST['mod']) return;
-                
-            // Setup
-            $key = $settings['apikey'];
-            $verifonly = $settings['verifonly'];
-            $timeout = $settings['curl_timeout'];
-            $body = ''; if (isset($_POST["body"])) $body = self::remove_accents($_POST["body"]);  
-                
-            // Final Step
-            if (isset($_POST['body']) && self::spamcheck($key, $_SERVER['REMOTE_ADDR'], $body, '', $verifonly, $timeout)){
-                error('Your post could not be submitted due to your post or your IP address being listed @ spam.kolyma.org');
+            // Has a post been made?
+            if ($action == 'post-thread' || $action == 'post') {
+
+                // Moderator
+                if (isset($_POST['mod']) && $_POST['mod']) return;
+                    
+                // Setup
+                $key        = $settings['apikey'];
+                $ip         = $_SERVER['REMOTE_ADDR'];
+                $body       = ''; if (isset($_POST["body"])) $body = self::remove_accents($_POST["body"]);      
+                $md5        = '';
+                $verifonly  = $settings['verifonly'];
+                $timeout    = $settings['curl_timeout'];
+
+                // Final Step
+                if (self::spamcheck($key, $ip, $body, $md5, $verifonly, $timeout)){
+                    error('Your post could not be submitted due to your post or your IP address being listed @ spam.kolyma.org');
+                }
+            
             }
-         
+            
         }
 
         public function _spamapi($key, $spam, $verifonly, $input, $timeout=5) {
@@ -65,7 +72,7 @@
             }
          
             // Is the content in SpamDB?
-            if (!empty($resp)) return true;
+            if (!empty(self::remove_accents($resp))) return true;
             
             return false;
         }
@@ -90,6 +97,30 @@
                         return true;
                 }
             }
+            return false;
+        }
+        
+        public function md5_hashcheck($key, $verifonly=true) {
+            
+            // Any files uploaded?
+            if (count($_FILES) == 0) return false;
+            
+            //if ($_FILES['upfile']['size'] > 1) error('deez');
+
+            // MD5 Setup
+            $md5cmd = false;
+            
+            if ($config['bsd_md5'])  $md5cmd = '/sbin/md5 -r';
+            if ($config['gnu_md5'])  $md5cmd = 'md5sum';
+            
+            /* $categories = array('ADV_IMG', 'BANNED_IMG');
+            
+            foreach ($categories as $spam) {
+                if (!empty($md5) && preg_match('/_IMG$/', $spam)) {
+                    if (self::_spamapi($key,$spam,$verifonly,$md5))
+                        return true;
+                }
+            }*/
             return false;
         }
         
@@ -203,7 +234,7 @@
                 'ｍ'=>'m','ｎ'=>'n','ｏ'=>'o','ｐ'=>'p','ｑ'=>'q','ｒ'=>'r','ｓ'=>'s','ｔ'=>'t',
                 'ｕ'=>'u','ｖ'=>'v','ｗ'=>'w','ｘ'=>'x','ｙ'=>'y','ｚ'=>'z',);
             
-            return strtr( $text, $trans);
+            return strtr($text, $trans);
         }
 
     };
