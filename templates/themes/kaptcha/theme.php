@@ -6,7 +6,7 @@
         //    - all (rebuild everything, initialization)
         //    - post (a post has been made)
         //    - post-thread (a thread has been made)
-		//    - delet
+        //    - delet
         
         Kaptcha::build($action, $settings);
     }
@@ -19,10 +19,10 @@
             // Add the Kaptcha Javascript
             if ($action == 'all')
                 file_write('js/kaptcha.js', Kaptcha::config($settings));
-			
-			// Uninstall
-			if ($action == 'delete')
-			    file_unlink('js/kaptcha.js');
+            
+            // Uninstall
+            if ($action == 'delete')
+                file_unlink('js/kaptcha.js');
             
             // Has a post been made?
             if ($action == 'post-thread' || $settings['reply_enabled'] && $action == 'post') {
@@ -50,8 +50,8 @@
         }
         
         public function config($settings){
-			global $config;
-			
+            global $config;
+            
             return Element('themes/kaptcha/kaptcha.js', Array(
                 'settings' => $settings,
             ));
